@@ -11,8 +11,9 @@ public class Common {
                 + context.getResources().getString(R.string.app_name)
                 + File.separator);
 
-        if(!dir.exists())
+        if(!dir.exists()) {
             dir.mkdir();
+        }
         return dir.getPath() + File.separator;
 
     }

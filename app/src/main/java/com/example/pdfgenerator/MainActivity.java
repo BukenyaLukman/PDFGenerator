@@ -48,39 +48,46 @@ public class MainActivity extends AppCompatActivity {
 
         btnCreatePdf = findViewById(R.id.btn_create_pdf);
 
-        Dexter.withContext(MainActivity.this)
-                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        btnCreatePdf.setOnClickListener( new View.OnClickListener() {
+        btnCreatePdf.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Creating PDF....(Please Wait)", Toast.LENGTH_SHORT).show();
+
+                Dexter.withActivity(MainActivity.this)
+                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
                             @Override
-                            public void onClick(View v) {
-                                createPDFFile(Common.getAppPath(MainActivity.this) + "test.pdf");
+                            public void onPermissionGranted(PermissionGrantedResponse response) {
+                                       createPDFFile(Common.getAppPath(MainActivity.this) + "test.pdf");
+
                             }
-                        });
-                    }
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse response) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
 
-                    }
-                });
+                            }
+                        }).check();
+                }
+        });
+
+        //createPDFFile(Common.getAppPath(MainActivity.this) + "test.pdf");
 
     }
 
     private void createPDFFile(String path) {
+
         if(new File(path).exists())
             new File(path).delete();
-        try{
+
+        try {
             Document document = new Document();
             //Save
-            PdfWriter.getInstance(document,new FileOutputStream(path));
+            PdfWriter.getInstance(document, new FileOutputStream(path));
             //Open to write
             document.open();
             //Setting
@@ -89,49 +96,52 @@ public class MainActivity extends AppCompatActivity {
             document.addAuthor("Bukenya Lukman");
             document.addCreator("Bukenya Lukman C");
 
+
             //Font size
-            BaseColor colorAccent = new BaseColor(0,153,204,255);
+            BaseColor colorAccent = new BaseColor(0, 153, 204, 255);
             float fontSize = 20.0f;
             float valueFontSize = 26.0f;
 
             //Custom font
-            BaseFont fontName = BaseFont.createFont("font/brandon_medium.otf","UTF-8",BaseFont.EMBEDDED);
+            Toast.makeText(this, "Font is reached", Toast.LENGTH_SHORT).show();
+            BaseFont fontName = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.WINANSI, BaseFont.EMBEDDED);
 
-            Font titleFont = new Font(fontName, 36.0f, NORMAL,BaseColor.BLACK);
-            addNewitem(document, "Order Details", Element.ALIGN_CENTER,titleFont);
+            Toast.makeText(this, "Font is Passed", Toast.LENGTH_SHORT).show();
+            Font titleFont = new Font(fontName, 36.0f, NORMAL, BaseColor.BLACK);
+            addNewitem(document, "Order Details", Element.ALIGN_CENTER, titleFont);
 
             // Add more
-            Font orderNumberFont = new Font(fontName,fontSize, Font.NORMAL,colorAccent);
-            addNewitem(document, "Order No",Element.ALIGN_LEFT,orderNumberFont);
+            Font orderNumberFont = new Font(fontName, fontSize, NORMAL, colorAccent);
+            addNewitem(document, "Order No", Element.ALIGN_LEFT, orderNumberFont);
 
-            Font orderNumberValueFont = new Font(fontName,valueFontSize, Font.NORMAL,BaseColor.BLACK);
-            addNewitem(document, "#717171",Element.ALIGN_LEFT,orderNumberValueFont);
-
-            addLineSeperator(document);
-
-            addNewitem(document,"Order Date",Element.ALIGN_LEFT,orderNumberFont);
-            addNewitem(document,"14/06/2020",Element.ALIGN_LEFT,orderNumberValueFont);
+            Font orderNumberValueFont = new Font(fontName, valueFontSize, NORMAL, BaseColor.BLACK);
+            addNewitem(document, "#717171", Element.ALIGN_LEFT, orderNumberValueFont);
 
             addLineSeperator(document);
 
-            addNewitem(document,"Account Name",Element.ALIGN_LEFT,orderNumberFont);
-            addNewitem(document,"Bukenya Lukman",Element.ALIGN_LEFT,orderNumberValueFont);
+            addNewitem(document, "Order Date", Element.ALIGN_LEFT, orderNumberFont);
+            addNewitem(document, "14/06/2020", Element.ALIGN_LEFT, orderNumberValueFont);
+
+            addLineSeperator(document);
+
+            addNewitem(document, "Account Name", Element.ALIGN_LEFT, orderNumberFont);
+            addNewitem(document, "Bukenya Lukman", Element.ALIGN_LEFT, orderNumberValueFont);
 
             addLineSeperator(document);
             addLineSpace(document);
-            addNewitem(document,"Product Details",Element.ALIGN_CENTER,titleFont);
+            addNewitem(document, "Product Details", Element.ALIGN_CENTER, titleFont);
             addLineSeperator(document);
 
 
             //Item
-            addNewItemWithLeftAndRight(document,"Pizza 25","(0.0%)",titleFont,orderNumberValueFont);
-            addNewItemWithLeftAndRight(document,"12.0*1000","12000.0",titleFont,orderNumberValueFont);
+            addNewItemWithLeftAndRight(document, "Pizza 25", "(0.0%)", titleFont, orderNumberValueFont);
+            addNewItemWithLeftAndRight(document, "12.0*1000", "12000.0", titleFont, orderNumberValueFont);
 
             addLineSeperator(document);
 
             //Item 2
-            addNewItemWithLeftAndRight(document,"Pizza 25","(0.0%)",titleFont,orderNumberValueFont);
-            addNewItemWithLeftAndRight(document,"12.0*1000","12000.0",titleFont,orderNumberValueFont);
+            addNewItemWithLeftAndRight(document, "Pizza 25", "(0.0%)", titleFont, orderNumberValueFont);
+            addNewItemWithLeftAndRight(document, "12.0*1000", "12000.0", titleFont, orderNumberValueFont);
 
             addLineSeperator(document);
 
@@ -139,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             //Total 1
             addLineSpace(document);
             addLineSpace(document);
-            addNewItemWithLeftAndRight(document,"Total","24000.0",titleFont,orderNumberValueFont);
+            addNewItemWithLeftAndRight(document, "Total", "24000.0", titleFont, orderNumberValueFont);
 
             document.close();
             Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
@@ -147,16 +157,23 @@ public class MainActivity extends AppCompatActivity {
             printPDF();
 
 
-
-        } catch (DocumentException | IOException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }catch (DocumentException e){
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void printPDF() {
         PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
         try{
-            PrintDocumentAdapter printDocumentAdapter = new PDFDocumentAdapter(MainActivity.this, Common.getAppPath(MainActivity.this)+ "test_pdf.pdf" );
+            PrintDocumentAdapter printDocumentAdapter = new PDFDocumentAdapter(MainActivity.this, Common.getAppPath(MainActivity.this)+ "test.pdf" );
+            assert printManager != null;
             printManager.print("Document",printDocumentAdapter,new PrintAttributes.Builder().build());
         }catch(Exception ignored){
 
